@@ -1,5 +1,6 @@
 package io.zipcoder.persistenceapp.services;
 
+import io.zipcoder.persistenceapp.models.Department;
 import io.zipcoder.persistenceapp.models.Employee;
 import io.zipcoder.persistenceapp.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class EmployeeService {
     }
 
     public Employee findById(Long id){
-        return repository.findOne(id);
+        return repository.findById(id).get();
     }
 
     public Employee create(Employee employee){
@@ -27,7 +28,7 @@ public class EmployeeService {
     }
 
     public Employee update(Long id, Employee employee){
-        Employee original = repository.findOne(id);
+        Employee original = repository.findById(id).get();
         // update all the fields one by one, not changing the ID at ALL
         original.setFirstName(employee.getFirstName());
         original.setLastName(employee.getLastName());
@@ -41,8 +42,11 @@ public class EmployeeService {
     }
 
     public boolean delete(Long id){
-        repository.delete(id);
+        Employee original = repository.findById(id).get();
+        if(original != null) {
+            repository.delete(original);
+        }
         // might need to change this in the future? not sure
-        return true;
+        return original != null;
     }
 }

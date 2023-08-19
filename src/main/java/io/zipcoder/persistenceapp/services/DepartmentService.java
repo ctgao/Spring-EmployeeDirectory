@@ -19,7 +19,7 @@ public class DepartmentService {
     }
 
     public Department findById(Long id){
-        return repository.findOne(id);
+        return repository.findById(id).get();
     }
 
     public Department create(Department department){
@@ -27,7 +27,7 @@ public class DepartmentService {
     }
 
     public Department update(Long id, Department department){
-        Department original = repository.findOne(id);
+        Department original = repository.findById(id).get();
         // update all the fields one by one, not changing the ID at ALL
         original.setName(department.getName());
         original.setManager(department.getManager());
@@ -36,8 +36,11 @@ public class DepartmentService {
     }
 
     public boolean delete(Long id){
-        repository.delete(id);
+        Department original = repository.findById(id).get();
+        if(original != null) {
+            repository.delete(original);
+        }
         // might need to change this in the future? not sure
-        return true;
+        return original != null;
     }
 }
